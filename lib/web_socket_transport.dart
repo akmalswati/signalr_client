@@ -60,7 +60,21 @@ class WebSocketTransport implements ITransport {
 
     var websocketCompleter = Completer();
     var opened = false;
-    url = url!.replaceFirst('http', 'ws');
+
+// old code
+    // url = url!.replaceFirst('http', 'ws');
+      //  FIXED: Clean URL conversion
+  final uri = Uri.parse(url!);
+  final wsScheme = uri.scheme == 'https' ? 'wss' : 'ws';
+  
+  // Build clean WebSocket URL without default port and fragment
+  url = '$wsScheme://${uri.host}${uri.path}';
+  
+  // Add query parameters if they exist
+  if (uri.hasQuery) {
+    url += '?${uri.query}';
+  }
+
     _logger?.finest("WebSocket try connecting to '$url'.");
 
     try {
